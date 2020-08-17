@@ -1,45 +1,45 @@
-# 编译运行nebula的开源服务端chatengine笔记
+# Compile and run nebula's open source server chatengine notes
 
-> 经作者[@robinfoxnan](https://me.csdn.net/robinfoxnan) 同意转载
+> Reprinted with permission of the author [@robinfoxnan](https://me.csdn.net/robinfoxnan)
 > 
 
-官方说在LINUX下运行，但是看了一下，基本用纯GO来编译，应该可以在WINDOWS下运行。
+The official said it runs under LINUX, but after a look, it basically uses pure GO to compile, and it should be able to run under WINDOWS.
 
-我使用的Windows10家庭版本，无法使用docker，所以决定直接安装服务。
+I am using the home version of Windows 10 and cannot use docker, so I decided to install the service directly.
 
-对于telegramd，按照作者的说法是不再支持，所以建议大家使用chatengine。
+For telegramd, according to the author's statement, it is no longer supported, so I suggest you use chatengine.
 
-## 1. 安装mysql5.7.19
+## 1. Install mysql5.7.19
 
-　[下载地址：](https://dev.mysql.com/downloads/mysql/)
+　[Download address:](https://dev.mysql.com/downloads/mysql/)
 
-用自带的执行脚本。\chatengine\docker\mysql\init-sql\01-chatengine.sql
+Use the built-in execution script. \chatengine\docker\mysql\init-sql\01-chatengine.sql
 
-需要注意：我是使用navicat进行建库和导入表结构，低版本不支持数据类型，而5.7安装比较麻烦，可以参考我另一片文章。
+Note: I use Navicat to build the database and import the table structure, the lower version does not support data types, and 5.7 installation is more troublesome, you can refer to another article of mine.
 
-其中5.7不支持脚本中的时间戳默认的值，需要在会话中加一个选项：
+Among them, 5.7 does not support the default value of the timestamp in the script. You need to add an option in the session:
 
 ```
 set session sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';
 ```
 
-否则会报告很多错误，造成表丢失，后期运行时候爆错。
+Otherwise, a lot of errors will be reported, causing the table to be lost, and errors will occur during later operation.
 
-## 2. 安装redis
+## 2. Install redis
 
-[帮助：](https://www.cnblogs.com/jylee/p/9844965.html)
+[Help:](https://www.cnblogs.com/jylee/p/9844965.html)
 
-[下载地址：](https://github.com/MicrosoftArchive/redis/releases)
+[Download address:](https://github.com/MicrosoftArchive/redis/releases)
 
-这个没有太多说的，比较简单。
+There is not much to say about this, it is relatively simple.
 
-## 3. 安装etcd
+## 3. Install etcd
 
-[介绍：](https://blog.csdn.net/skh2015java/article/details/80712214)
+[Introduction:](https://blog.csdn.net/skh2015java/article/details/80712214)
 
-[下载地址：](https://github.com/etcd-io/etcd/releases)
+[Download address:](https://github.com/etcd-io/etcd/releases)
 
-需要添加一个配置文件：命名为：etcd.conf.yml
+Need to add a configuration file: named: etcd.conf.yml
 
 ```
 name: etcd
@@ -47,37 +47,37 @@ listen-client-urls: http://0.0.0.0:2379
 advertise-client-urls: http://0.0.0.0:2379
 ```
 
-启动时候执行命令：
+Execute commands at startup:
 
 ```
-etcd.exe  –config-file etcd.conf.yml > log.txt
+etcd.exe --config-file etcd.conf.yml> log.txt
 ```
- 
-我使用golang1.13.8
+ 
+I use golang 1.13.8
 
-在c:\godir   设置为GOPATH
+Set it to GOPATH in c:\godir
 
-注意：目录一定要按照约定方式存放，比如
+Note: The directory must be stored in accordance with the agreed method, such as
 
 C:\godir\src\github.com\nebula-chat\chatengine
 
-否则编译时候会找不到库，
+Otherwise, the library will not be found when compiling,
 
-按照手册逐个的go get / go build
+Go get / go build according to the manual one by one
 
-然后将各个配置文件的地址更改一下。
+Then change the address of each configuration file.
 
- 
+ 
 
-启动各个文件比较繁琐，所以做一个批处理文件用来启动各个EXE。
+Starting each file is cumbersome, so make a batch file to start each EXE.
 
- 
-## 注意
-注意：目前开源的版本支持1.0协议，所以编译客户端时候需要按nubela说明，checkout到指定版本打补丁编译。
+ 
+## Note
+Note: The current open source version supports the 1.0 protocol, so when compiling the client, you need to follow the instructions of nubela, checkout to the specified version to patch and compile.
 
- 支持group，但是不支持channel和secret聊天。
+ Supports group, but does not support channel and secret chat.
 
-企业版（收费版）支持目前的新的功能，有需要的自己telegram联系作者。
+The enterprise version (paid version) supports the current new functions. If you need it, contact the author on your own telegram.
 
 
-具体源码的分析，见我其他的文章。
+For specific source code analysis, see my other articles.
